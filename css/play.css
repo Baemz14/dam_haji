@@ -7,3 +7,17 @@ body {
     color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
+
+.canvas-container {
+    width: 35vw;
+    max-width: 800px;
+    margin: 0;
+    aspect-ratio: 1 / 1; 
+    position: relative;
+}
+
+.game-canvas {
+    width: 100%;
+    height: auto;
+    position: absolute;
+}

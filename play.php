@@ -17,7 +17,16 @@
     <?php include('sidebar.php'); ?>
 
     <main class="dh-has-sidebar dh-main">
-        <h1>play</h1>
+
+        <div id="canvas_container" class="canvas-container">
+            <canvas width="1600" height="1600" class="game-canvas"></canvas>
+            <canvas width="1600" height="1600" class="game-canvas"></canvas>
+            <canvas width="1600" height="1600" class="game-canvas"></canvas>
+            <canvas width="1600" height="1600" class="game-canvas"></canvas>
+            <canvas width="1600" height="1600" class="game-canvas"></canvas>
+            <canvas id="input_canvas" width="1600" height="1600" class="game-canvas"></canvas>
+        </div>
+
     </main>
 </body>
 </html>
