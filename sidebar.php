@@ -23,7 +23,7 @@
 
     <!-- Navigation -->
     <nav class="dh-sidebar__nav">
-        <a href="play.php" class="dh-nav-item">
+        <a href="/dam_haji/play/" class="dh-nav-item">
             <i class="fa-solid fa-chess-board dh-nav-icon"></i>
             <span class="dh-nav-label">Play</span>
         </a>

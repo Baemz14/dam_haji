@@ -1,0 +1,43 @@
+.menu-container {
+    max-width: 400px;
+    margin: 0 23px;
+    background-color: #181818;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-title {
+    padding: 15px 20px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: #ffffff;
+    border-bottom: 1px solid #222;
+    background-color: #ff0000;
+}
+
+.menu-selection {
+    display: flex; /* Makes buttons side-by-side */
+    background-color: #212121;
+}
+
+.menu-tab {
+    flex: 1; /* Makes all buttons equal width */
+    padding: 12px 0;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #b1b1b1;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent; /* Placeholder for active state */
+}
+
+.menu-tab:hover {
+    background-color: #2a2a2a;
+    color: #fff;
+}
+
+.menu-tab.active {
+    color: #fff;
+    background-color: #181818;
+}

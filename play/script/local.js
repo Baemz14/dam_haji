@@ -1,16 +1,16 @@
 import { callServer } from '/dam_haji/include/call_server.js';
 import * as boardRenderer from '/dam_haji/include/board_renderer.js';
-import * as boardLogic from '/dam_haji/include/board_logic.js';
-import { createBoard } from '/dam_haji/include/board_struct.js';
+import * as boardLogic from '/dam_haji/game_logic/board_logic.js';
+import { createBoard } from '/dam_haji/game_logic/board_struct.js';
 
 let inputCanvas;
-let board = createBoard("8/8/5b2/8/1b1b1b1b/4w3/8/2W5");
+let board = createBoard();
 let legalMoveArr = [];
 let activeMoveArr = [];
 
-export async function onPlayLoad() {
+export function onLocalLoad() {
     boardRenderer.initRenderer(document.getElementById('canvas_container'));
-
+    
     legalMoveArr = boardLogic.getLegalMoves(board);
     boardRenderer.drawBoard();
     boardRenderer.drawMoves(legalMoveArr);
@@ -20,6 +20,31 @@ export async function onPlayLoad() {
     inputCanvas.addEventListener('mousedown', onMouseDown);
     inputCanvas.addEventListener('mouseup', onMouseUp);
     inputCanvas.addEventListener('mousemove', onMouseMove);
+
+    let moveTab = document.getElementById("move_tab");
+    let settingsTab = document.getElementById("settings_tab");
+    let analysisTab = document.getElementById("analysis_tab");
+    moveTab.addEventListener("click", function(e) {
+        if(!moveTab.classList.contains("active")) {
+            moveTab.classList.add("active");
+        }
+        settingsTab.classList.remove("active");
+        analysisTab.classList.remove("active");
+    });
+    settingsTab.addEventListener("click", function(e) {
+        if(!settingsTab.classList.contains("active")) {
+            settingsTab.classList.add("active");
+        }
+        moveTab.classList.remove("active");
+        analysisTab.classList.remove("active");
+    });
+    analysisTab.addEventListener("click", function(e) {
+        if(!analysisTab.classList.contains("active")) {
+            analysisTab.classList.add("active");
+        }
+        settingsTab.classList.remove("active");
+        moveTab.classList.remove("active");
+    });
 }
 
 function onMouseDown(e) {

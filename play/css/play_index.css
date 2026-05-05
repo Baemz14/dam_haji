@@ -1,0 +1,16 @@
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+}
+
+.menu-container {
+    max-width: 400px;
+    margin: 0 23px;
+    background-color: #181818;
+}
+
+.menu-button {
+    margin: auto;
+}

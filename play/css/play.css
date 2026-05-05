@@ -1,11 +1,14 @@
 body {
     margin: 0;
-    background-color: #1a1816;
+    background-color: #282827;
 }
+
 .dh-main {
     padding: 40px;
     color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: grid;
+    grid-template-columns: auto 1fr;
 }
 
 .canvas-container {

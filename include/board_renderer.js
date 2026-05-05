@@ -21,6 +21,9 @@ let executedColor = '#8bacf2';
 
 let spritesheet = new Image();
 
+let pieceBuffer = null;
+let pieceLoaded = false;
+
 export function initRenderer(canvas_container) {
     let i = 0;
     for (const canvas of canvas_container.children) {
@@ -31,6 +34,17 @@ export function initRenderer(canvas_container) {
     }
 
     spritesheet.src = '/dam_haji/resources/pieces_spritesheet.png';
+    spritesheet.onload = function () {
+        pieceLoaded = true;
+        if (pieceBuffer) {
+            let canvas = canvasArr[layer.piece]
+            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+            let pieceArr = boardLogic.stateToArr(pieceBuffer.state);
+            for (const piece of pieceArr) {
+                drawPiece(piece);
+            }
+        }
+    };
 }
 
 export function drawBoard() {
@@ -88,6 +102,11 @@ export function drawMoves(legalMoveArr) {
 }
 
 export function drawPieces(board) {
+    if (!pieceLoaded) {
+        pieceBuffer = board;
+        return;
+    }
+
     let canvas = canvasArr[layer.piece]
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     let pieceArr = boardLogic.stateToArr(board.state);
