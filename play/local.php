@@ -41,6 +41,26 @@
                 <div id="settings_tab" class="menu-tab">Settings</div>
                 <div id="analysis_tab" class="menu-tab">Analysis</div>
             </div>
+
+            <div class="menu-meat">
+                <div id="move_container">
+                    <div class="move-row">
+                        <div class="move-number">1.</div>
+                        <div class="move-white">wa3b4</div> 
+                        <div class="move-black">ba6b5</div>
+                    </div>
+                    <div id="test_history"></div>
+                </div>
+            </div>
+
+            <div class="menu-footer">
+                <div class="gc-btn-container">
+                    <button id="first_move">|<</button>
+                    <button id="undo"><</button>
+                    <button id="redo">></button>
+                    <button id="last_move">>|</button>                    
+                </div>
+            </div>
         </div>
     </main>
 </body>

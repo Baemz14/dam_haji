@@ -20,13 +20,19 @@ export function createCapture(x, y) {
     };
 }
 
+// moved from a struct to a Move command class
+// export function createMove(fromX, fromY, toX, toY, type, captures=[]) {
+//     return {
+//         fromX: fromX, fromY: fromY,
+//         toX: toX, toY: toY,
+//         type: type,
+//         captures: captures
+//     };
+// }
 export function createMove(fromX, fromY, toX, toY, type, captures=[]) {
-    return {
-        fromX: fromX, fromY: fromY,
-        toX: toX, toY: toY,
-        type: type,
-        captures: captures
-    };
+    return new Move(
+        fromX, fromY, toX, toY, type, captures
+    );
 }
 
 export function linkCaptures(capture, captures) {

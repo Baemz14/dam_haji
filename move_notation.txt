@@ -1,0 +1,4 @@
+regular move: a3b4
+capture: a3x[b4]c5
+connecting: a3x[b4]c5x[d6]e7
+promotion: c7d8=H

@@ -6,6 +6,9 @@ const createMove = boardStruct.createMove;
 const createPiece = boardStruct.createPiece;
 const createRule = boardStruct.createRule;
 
+let rowNot = [8, 7, 6, 5, 4, 3, 2, 1];
+let colNot = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
 // #region UTILS
 function isOutOfBoard(x, y) {
     return x < 0 || x >= 8 || y <0 || y >= 8;
@@ -59,7 +62,7 @@ export function stateToArr(boardState) {
 }
 
 //TODO: if slow can halve the arr size
-function stateToArr2D(boardState) {
+export function stateToArr2D(boardState) {
     let piece2DArr = new Array(8);
     for (let i = 0; i < 8; i++) {
         piece2DArr[i] = new Array(8).fill('-');
@@ -80,7 +83,7 @@ function stateToArr2D(boardState) {
     return piece2DArr;
 }
 //TODO: if slow can halve the arr size
-function arr2DToState(arr2D) {
+export function arr2DToState(arr2D) {
     let state = "";
     let skip = 0;
     for (let y = 0; y < arr2D.length; y++) {
@@ -99,6 +102,10 @@ function arr2DToState(arr2D) {
         skip = 0;
     }
     return state;
+}
+
+export function posNot(x, y) {
+    return `${colNot[x]}${rowNot[y]}`;
 }
 // #endregion
 

@@ -1,4 +1,4 @@
-import * as boardLogic from '/dam_haji/include/board_logic.js';
+import * as boardLogic from '/dam_haji/game_logic/board_logic.js';
 
 //TODO: add layer to canvas in array, and have this file store the canvases
 let canvasArr = [];
