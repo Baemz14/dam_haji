@@ -8,7 +8,7 @@ export async function initGameSocket() {
     const data = await callServer("/dam_haji/server_call/user_call.php", "GET_GAME");
     
     // Create the socket only after we have the PHP data
-    socket = io("http://192.168.0.18:3000", {
+    socket = io("http://localhost:3000", {
         query: {
             gameData: data['game_data'],
             matchmakeData: data['matchmake_data']

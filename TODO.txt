@@ -1,0 +1,9 @@
+play online move history have bug
+handle when player disconnect
+player time
+
+save game to a db even if both player is guest
+
+bot play
+
+user host bot server account?
