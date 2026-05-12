@@ -6,9 +6,10 @@ let layer = Object.freeze({
     board: 0,
     move: 1,
     activatedMove: 2,
-    piece: 3,
-    holding: 4,
-    input: 5
+    captureMove: 3,
+    piece: 4,
+    holding: 5,
+    input: 6
 });
 
 let blackColor = '#769656';
@@ -150,41 +151,41 @@ export function activateMoves(moves) {
             squareW, 
             squareH
         );
-            
-        if (move.type == "MOVE") {
-            canvasCtx.beginPath();
-            canvasCtx.arc(
-                move.toX*squareW + (squareW/2),
-                move.toY*squareH + (squareH/2), 
-                squareH*0.2, 
-                0, 
-                2 * Math.PI
-            );
-            canvasCtx.fillStyle = moveToColor;
-            canvasCtx.fill();
-        }
 
-        else if (move.type == "CAPTURE") {
-            canvasCtx.beginPath();
-            canvasCtx.arc(
-                move.toX*squareW + (squareW/2),
-                move.toY*squareH + (squareH/2), 
-                squareH*0.2, 0, 2 * Math.PI
-            );
-            canvasCtx.fillStyle = moveToColor;
-            canvasCtx.fill();
-            for (const capture of move.captures) {
-                let captureX = capture.x*squareW;
-                let captureY = capture.y*squareH;
-    
-                canvasCtx.fillStyle = captureColor;
-                canvasCtx.fillRect(captureX, captureY, squareW, squareH);
-            }
-        }
+        canvasCtx.beginPath();
+        canvasCtx.arc(
+            move.toX*squareW + (squareW/2),
+            move.toY*squareH + (squareH/2), 
+            squareH*0.2, 0, 2 * Math.PI
+        );
+        canvasCtx.fillStyle = moveToColor;
+        canvasCtx.fill();
+    }
+}
+
+export function clearCapture() {
+    let canvas = canvasArr[layer.captureMove];
+    let canvasCtx = canvas.getContext('2d');
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+export function hoverCapture(move) {
+    let canvas = canvasArr[layer.captureMove];
+    let canvasCtx = canvas.getContext('2d');
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    let squareW = Math.floor(canvas.width / 8.0);
+    let squareH = Math.floor(canvas.height / 8.0);
+    for (const capture of move.captures) {
+        let captureX = capture.x*squareW;
+        let captureY = capture.y*squareH;
+
+        canvasCtx.fillStyle = captureColor;
+        canvasCtx.fillRect(captureX, captureY, squareW, squareH);
     }
 }
 
 export function deactivateMoves() {
+    clearCapture();
     let canvas = canvasArr[layer.activatedMove];
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 }

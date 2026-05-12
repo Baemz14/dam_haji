@@ -1,4 +1,5 @@
 import * as boardStruct from "./board_struct.js";
+import { Move } from "./move.js";
 // moved all these func into board_struct
 // the before code dont have that boardStruct namespace dont want to find and add each
 const createCapture = boardStruct.createCapture;
@@ -8,6 +9,12 @@ const createRule = boardStruct.createRule;
 
 let rowNot = [8, 7, 6, 5, 4, 3, 2, 1];
 let colNot = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+let rowPos = {
+    "8": 0, "7": 1, "6": 2, "5": 3, "4": 4, "3": 5, "2": 6, "1": 7
+};
+let colPos = {
+    'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7
+};
 
 // #region UTILS
 function isOutOfBoard(x, y) {
@@ -36,6 +43,11 @@ function canCapture(token1, token2) {
     } if (typeof token1 === 'string' && typeof token2 === 'string') {
         return token2.toUpperCase() === ((token1.toUpperCase() === "W")? "B": "W");
     }
+}
+
+function isPromote(piece, y) {
+    if (piece.isHaji) { return false; }
+    return y === (piece.isWhite? 0: 7);
 }
 
 export function stateToArr(boardState) {
@@ -107,6 +119,35 @@ export function arr2DToState(arr2D) {
 export function posNot(x, y) {
     return `${colNot[x]}${rowNot[y]}`;
 }
+
+export function notPos(not) {
+    if (!isPosNot(not)) {
+        return { x: -1, y: -1 };
+    }
+    return { x: colPos[not.charAt(0)], y: rowPos[not.charAt(1)] };
+}
+
+export function isPosNot(not) {
+    if (not.length !== 2) {
+        return false;
+    }
+    return not.charAt(0) >= 'a' && not.charAt(0) <= 'h' &&
+        not.charAt(1) >= '1' && not.charAt(1) <= '8';
+}
+
+export function gameState(board) {
+    let isEnded = getLegalMoves(board).length <= 0;
+
+    if (isEnded) {
+        if (board.isWhiteMove) {
+            return "BLACK_WIN";
+        } else {
+            return "WHITE_WIN";
+        }
+    }
+    return "ONGOING";
+}
+
 // #endregion
 
 // #region BOARD CALLS
@@ -134,12 +175,27 @@ export function getLegalMoves(board) {
             legalMoveArr.push(createMove(
                 piece.x, piece.y,
                 movePos.x, movePos.y,
-                "MOVE"
+                [],
+                isPromote(piece, movePos.y)
             ));
         }
-        let blah = capturePositions(piece, board);
-        //console.log(blah);
-        legalMoveArr.push(...blah);
+        for (const capture of capturePositions(piece, board)) {
+            capture.isPromotion = isPromote(piece, capture.toY);
+            legalMoveArr.push(capture);
+        }
+    }
+    if (board.rule.forceCaptureMax) {
+        let maxCapture = 0;
+        let unPurgedMove = [];
+        for (const move of legalMoveArr) {
+            if (move.captures.length > maxCapture) {
+                maxCapture = move.captures.length;
+                unPurgedMove = [move];
+            } else if (move.captures.length === maxCapture) {
+                unPurgedMove.push(move)
+            }
+        }
+        legalMoveArr = unPurgedMove;
     }
     return legalMoveArr;
 }
@@ -153,7 +209,7 @@ function mockMoveArr2D(boardArr, move) {
             x: capture.x, y: capture.y,
             token: boardArr[capture.y][capture.x]
         });
-        boardArr[capture.y][capture.x] = 'c';
+        boardArr[capture.y][capture.x] = '-';
     }
     return undoMove;
 }
@@ -204,6 +260,33 @@ function damMoves(piece, board) {
 
 function hajiMoves(piece, board) {
     let movePos = [];
+    let moveDir = [
+        { x: 1, y: 1},
+        { x: -1, y: -1},
+        { x: -1, y: 1},
+        { x: 1, y: -1}
+    ];
+    let boardArr = stateToArr2D(board.state);
+    for (const dir of moveDir) {
+        let landX = piece.x + dir.x;
+        let landY = piece.y + dir.y;
+        while(!isOutOfBoard(landX, landY)) {
+            if (boardArr[landY][landX] === '-') {
+                movePos.push({
+                    x: landX, y: landY
+                });
+            } else {
+                break;
+            }
+
+            landX += dir.x;
+            landY += dir.y;
+
+            if (!board.rule.flyingHaji) {
+                break;
+            }
+        }
+    }
     return movePos;
 }
 
@@ -216,7 +299,90 @@ function capturePositions(piece, board) {
 }
 
 function hajiCaptures(piece, board) {
-    return [];
+    let boardArr = stateToArr2D(board.state);
+    return hajiCaptureRecurse(
+        piece.isWhite,
+        piece.x, piece.y,
+        0, 0,
+        boardArr,
+        board.rule.flyingHajiCapture
+    );
+}
+
+function hajiCaptureRecurse(
+    isWhite,
+    fromX, fromY,
+    avoidDirX, avoidDirY,
+    boardArr,
+    flyingCapture
+) {
+    let captures = [];
+    let captureDir = [
+        { x: 1, y: 1},
+        { x: -1, y: -1},
+        { x: -1, y: 1},
+        { x: 1, y: -1}
+    ];
+    for (const dir of captureDir) {
+        if (dir.x === avoidDirX && dir.y === avoidDirY) {
+            continue;
+        }
+        let captureX = -1;
+        let captureY = -1;
+        for(
+            let checkX = fromX + dir.x, checkY = fromY + dir.y;
+            !isOutOfBoard(checkX, checkY);
+            checkX += dir.x, checkY += dir.y
+        ) {
+            if (boardArr[checkY][checkX] === '-') {
+            //console.log("henlo");
+                continue;
+            } if (isAllied(isWhite, boardArr[checkY][checkX])) {
+                break;
+            } if (canCapture(isWhite, boardArr[checkY][checkX])) {
+                captureX = checkX;
+                captureY = checkY;
+                break;
+            }
+        }
+        if (isOutOfBoard(captureX, captureY)) {
+            continue;
+        }
+        for (
+            let landX = captureX + dir.x, landY = captureY + dir.y;
+            !isOutOfBoard(landX, landY);
+            landX += dir.x, landY += dir.y
+        ) {
+            if (boardArr[landY][landX] !== '-') {
+                break;
+            }
+            let capture = createMove(
+                fromX, fromY,
+                landX, landY,
+                [createCapture(captureX, captureY)],
+                false
+            );
+            let undoMove = mockMoveArr2D(boardArr, capture);
+            let captureLink = hajiCaptureRecurse(
+                isWhite,
+                landX, landY,
+                -dir.x, -dir.y,
+                boardArr
+            );
+            undoMockMoveArr2D(boardArr, undoMove);
+            if (captureLink.length > 0) {
+                captures.push(...boardStruct.linkCaptures(capture, captureLink));
+                captures.push(capture);
+            } else {
+                captures.push(capture);
+            }
+
+            if (!flyingCapture) {
+                break;
+            }
+        }
+    }
+    return captures;
 }
 
 function damCaptures(piece, board) {
@@ -266,19 +432,24 @@ function damCaptureRecurse(
         let capture = createMove(
             fromX, fromY,
             landX, landY,
-            "CAPTURE",
-            [ createCapture (
-                captureX, captureY
-            ) ]
+            [ createCapture (captureX, captureY) ],
+            false
         );
 
         let undoMove = mockMoveArr2D(boardArr, capture);
-        captures.push(...boardStruct.linkCaptures(capture, damCaptureRecurse(
+        let captureLinks = damCaptureRecurse(
             isWhite,
             landX, landY,
             fromX, fromY,
             boardArr, canCaptureBackward
-        )));
+        );
+        if (captureLinks.length > 0) {
+            captures.push(...boardStruct.linkCaptures(capture, captureLinks));
+            captures.push(capture);
+        } else {
+            captures.push(capture);
+        }
+
         undoMockMoveArr2D(boardArr, undoMove);
     }
     return captures;

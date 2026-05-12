@@ -58,6 +58,8 @@ switch ($call_state) {
             $user = getUser($user_id);
             if ($user) {
                 $_SESSION['user_id'] = $user_id;
+                $_SESSION['is_guest'] = false;
+                $_SESSION['display_name'] = $user['display_name'];
                 $response['status'] = "success";
                 $response['error_log'] = "no error";
             }
@@ -76,15 +78,24 @@ switch ($call_state) {
     case "CHECK_LOGIN":
         if (isset($_SESSION['user_id'])) {
             $user_id = $_SESSION['user_id'];
-            if (getUser($user_id)) {
+            $user = getUser($user_id);
+            if ($user) {
                 $response['is_logged_in'] = 'true';
-            }
-            else {
+                $response['display_name'] = $_SESSION['display_name'];
+                $response['user'] = $user;
+            } else {
                 $response['is_logged_in'] = 'false';
                 $response['error_log'] = 'user id is there but cant find user';
             }
-        }
-        else {
+        } else if (isset($_SESSION['is_guest'])) {
+            if ($_SESSION['is_guest']){
+                $response['user'] = null;
+                $response['is_logged_in'] = 'false';
+                $response['is_guest'] = 'true';
+                $response['display_name'] = $_SESSION['display_name'];
+                $response['guest_id'] = $_SESSION['guest_id'];
+            }
+        } else {
             $response['is_logged_in'] = 'false';
             $response['error_log'] = 'cant find user id';
         }
@@ -101,6 +112,40 @@ switch ($call_state) {
         }
         session_destroy();
         $response['status'] = "success";
+        break;
+
+    case "GUEST":
+        if (isset($_POST['display_name'])) {
+            $_SESSION['guest_id'] = generate_uuid();
+            $_SESSION['is_guest'] = true;
+            $_SESSION['display_name'] = $_POST['display_name'];
+            $response['status'] = "success";
+        } else {
+            $response[status] = "failed";
+            $response[error_log] = "display name not passed";
+        }
+        break;
+
+    case "START_GAME":
+        if (isset($_POST['game_data'])) {
+            $_SESSION['matchmake_data'] = $_POST['matchmake_data'];
+            $_SESSION['game_data'] = $_POST['game_data'];
+            $response['status'] = "success";
+        } else {
+            $response['status'] = "failed";
+            $response['error_log'] = "no game id passed";
+        }
+        break;
+
+    case "GET_GAME":
+        if (isset($_SESSION['game_data']) && isset($_SESSION['matchmake_data'])) {
+            $response['matchmake_data'] = $_SESSION['matchmake_data'];
+            $response['game_data'] = $_SESSION['game_data'];
+        } else {
+            $response['game_data'] = null;
+            $response['matchmake_data'] = null;
+            $response['error_log'] = "no game id";
+        }
         break;
 
     default:

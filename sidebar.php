@@ -18,7 +18,7 @@
         <div class="dh-sidebar__logo">
             <span class="dh-logo-piece"></span>
         </div>
-        <span class="dh-sidebar__brand-name">Dam Haji</span>
+        <span class="dh-sidebar__brand-name" onclick="window.location.href='/dam_haji/index.php'">Dam Haji</span>
     </div>
 
     <!-- Navigation -->
@@ -53,11 +53,23 @@
             document.getElementById('signupBtn').style.display = "none";
             document.getElementById('loginBtn').style.display = "none";
             document.getElementById('logoutBtn').style.display = "";
-        }
-        else {
+        } else if(data['is_guest'] === "true") {
+            document.getElementById('signupBtn').style.display = "";
+            document.getElementById('loginBtn').style.display = "";
+            document.getElementById('logoutBtn').style.display = "";
+        } else {
             document.getElementById('signupBtn').style.display = "";
             document.getElementById('loginBtn').style.display = "";
             document.getElementById('logoutBtn').style.display = "none";
         }
+
+        document.getElementById("logoutBtn").addEventListener("click", async function(e) {
+            e.preventDefault();
+            const data = await callServer('/dam_haji/server_call/user_call.php', "LOGOUT");
+            console.log("henlo");
+            if (data['status'] === "success") {
+                    window.location.href = "/dam_haji/";
+                }
+            });
     </script>
 </aside>

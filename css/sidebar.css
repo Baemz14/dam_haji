@@ -66,6 +66,7 @@
     font-weight: 700;
     color: var(--dh-text-primary);
     letter-spacing: -0.5px;
+    cursor: pointer;
 }
 
 /* Navigation */

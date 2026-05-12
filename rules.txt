@@ -1,0 +1,4 @@
+link capture behind
+force capture max // no capture die (only one)
+flying haji (can go backward and forward any distance)
+flying haji capture (can land any square behind the captured)

@@ -17,7 +17,7 @@
 
     <main class="dh-has-sidebar dh-main">
         <h1>Welcome to Dam Haji</h1>
-        <p>hello player.</p>
+        <p>hello <span id="displayName">player</span>.</p>
     </main>
 </body>
 </html>

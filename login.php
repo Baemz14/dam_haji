@@ -29,5 +29,6 @@
     </form>
 
     <p>Don't have an account? <a href="signup.php">Sign up here</a></p>
+    <p>or <a href="guest.php">play as guest</a></p>
 </body>
 </html>
